@@ -54,11 +54,13 @@ We recommend using the interactive shell for most tasks.
 
 3.  **Common Tasks:**
 
-    _Initialize a new theme:_
+    _Pull existing theme:_
 
     ```bash
-    shopify theme init my-new-theme
+    shopify theme pull
     ```
+
+    You will be prompted to select the theme you want to pull from your store (e.g., "Dawn", "Development").
 
     _Serve (preview) a theme:_
 
