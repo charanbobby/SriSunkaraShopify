@@ -5,6 +5,7 @@ This project contains the Shopify theme and Docker configuration for the Sri Sun
 ## Getting Started
 
 We use Docker to run the Shopify CLI, ensuring a consistent environment without local dependency issues.
+The current directory is mounted to `/app` inside the container, so any changes you make locally are immediately reflected in the container.
 
 ### Prerequisites
 
@@ -13,33 +14,72 @@ We use Docker to run the Shopify CLI, ensuring a consistent environment without 
 ### Installation & Usage
 
 1.  **Clone the repository:**
+
     ```bash
     git clone https://github.com/charanbobby/SriSunkaraShopify.git
     cd SriSunkaraShopify
     ```
 
 2.  **Start the environment:**
+
     ```powershell
     docker-compose up -d
     ```
 
 3.  **Run Shopify Commands:**
     You can run commands inside the container using `docker-compose exec`:
-    
-    *Check version:*
+
+    _Check version:_
+
     ```powershell
     docker-compose exec -T shopify-cli shopify version
     ```
 
-    *Interactive Shell (Recommended):*
+## Workflow (Interactive Mode)
+
+We recommend using the interactive shell for most tasks.
+
+1.  **Enter the container:**
+
     ```powershell
     docker-compose exec -it shopify-cli sh
     ```
-    Once inside, you can run `shopify theme login`, `shopify theme dev`, etc.
 
-### Documentation
+    _Your prompt will change to something like `/app #`_
 
-See [walkthrough.md](walkthrough.md) for detailed step-by-step instructions.
+2.  **Login:**
+    Run `shopify theme login`.
+
+    > [!IMPORTANT] > **Manual Login Required**: The container cannot open your browser automatically. It will print a URL to the terminal. Copy and paste this URL into your browser to complete the login.
+
+3.  **Common Tasks:**
+
+    _Initialize a new theme:_
+
+    ```bash
+    shopify theme init my-new-theme
+    ```
+
+    _Serve (preview) a theme:_
+
+    ```bash
+    cd my-themed-folder
+    shopify theme dev --host 0.0.0.0
+    ```
+
+    > Note: We use `--host 0.0.0.0` to expose the server to your host machine.
+
+    _Create a new app:_
+
+    ```bash
+    npm init @shopify/app@latest
+    ```
+
+## Troubleshooting
+
+- **Login hanging or crashing**: We've set `CODESPACES=1` in the Dockerfile to force the CLI to print a URL instead of opening a browser. If `xdg-open` errors persist, double-check that you are copying the URL manually.
+- **Port already in use**: Ensure no other `shopify theme dev` process is running (check `docker-compose ps`).
+- **File permissions**: On Docker Desktop for Windows, file permissions are usually handled automatically. If you cannot edit files, check your Docker Desktop resource sharing settings.
 
 ### Test Store Password
 
