@@ -87,3 +87,21 @@ We recommend using the interactive shell for most tasks.
 ### Test Store Password
 
 `luiggu`
+
+## Monitoring Resources
+
+To check the resource usage (CPU/Memory) of the Docker container, use one of these methods:
+
+1.  **Terminal (Quickest)**:
+    Run the command:
+
+    ```powershell
+    docker stats
+    ```
+
+2.  **Docker Desktop (Graphical)**:
+    Open the Docker Desktop dashboard, go to **Containers**, and click on the **Stats** tab (graph icon) for `shopify-shopify-cli-1`.
+
+3.  **VS Code Docker Extension**:
+    Click the **Docker** icon (whale) in the VS Code sidebar. Right-click the running container and select **View Stats**.
+    _(Note: The "Dev Containers" view shown in your screenshot may not be configured to show these stats directly)._
