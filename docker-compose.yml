@@ -1,0 +1,9 @@
+services:
+  shopify-cli:
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - "9292:9292"
+    tty: true
+    stdin_open: true
