@@ -70,6 +70,7 @@ We recommend using the interactive shell for most tasks.
     ```
 
     > Note: We use `--host 0.0.0.0` to expose the server to your host machine.
+    > **Access**: Open `http://localhost:9292` in your browser.
 
     _Create a new app:_
 
