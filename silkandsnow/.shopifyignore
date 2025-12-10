@@ -1,0 +1,22 @@
+# Node modules
+node_modules/
+package-lock.json
+
+# Build configuration
+tailwind.config.js
+postcss.config.js
+
+# Source files (if you create them)
+src/
+
+# Development files
+*.log
+.DS_Store
+.env
+.env.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo

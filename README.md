@@ -83,25 +83,111 @@ We do **all** our work inside the `shopify-cli` container to avoid version confl
 
 ## ❄️ Silk and Snow Workflow
 
-### 1. Developer Setup
+### Quick Start (Recommended)
 
-1.  **Shell into the container (same as above):**
+The fastest way to start developing with Tailwind CSS and Shopify:
+
+1.  **Shell into the container:**
 
     ```powershell
     docker-compose exec -it shopify-cli sh
     ```
 
-2.  **Pull the Theme (Optional):**
+2.  **Navigate to silkandsnow and start development:**
+
+    ```bash
+    cd silkandsnow
+    npm run dev
+    ```
+
+    This single command runs **both**:
+
+    - 🛍️ Shopify theme dev server (http://localhost:9292)
+    - 🎨 Tailwind CSS watch mode (auto-rebuild on save)
+
+3.  **Authenticate (first time only):**
+    - Copy the authentication URL from the terminal
+    - Open it in your browser and log in
+    - The dev server will start automatically
+
+**Access your local site at:** [http://localhost:9292](http://localhost:9292)
+
+---
+
+### Alternative: Manual Setup
+
+If you prefer to run commands separately:
+
+1.  **Pull the Theme (Optional):**
 
     ```bash
     shopify theme pull --store=development-silkandsnow.myshopify.com --path silkandsnow
     ```
 
-3.  **Run the Dev Server:**
+2.  **Run the Dev Server (without Tailwind):**
     ```bash
     shopify theme dev --store=development-silkandsnow.myshopify.com --path silkandsnow --host 0.0.0.0
     ```
-    _(Note the `--path silkandsnow` argument is critical)_
+
+### 2. Tailwind CSS Setup (Silk and Snow)
+
+The Silk and Snow theme uses Tailwind CSS v4 for styling. The installation is complete and ready to use.
+
+**Setup includes:**
+
+- ✅ **Package.json**: Tailwind CSS v4.1.17 installed
+- ✅ **Input CSS**: `src/input.css` with Tailwind import
+- ✅ **Build Scripts**: Configured in package.json
+- ✅ **Output CSS**: Compiled to `assets/tailwind.css`
+- ✅ **Theme Integration**: Added to `snippets/stylesheets.liquid`
+- ✅ **.shopifyignore**: Excludes `node_modules/` and `src/` from uploads
+
+**Build Commands:**
+
+```bash
+# Inside the Docker container
+cd silkandsnow
+
+# Build CSS once (minified for production)
+npm run build:css
+
+# Watch for changes and rebuild automatically
+npm run watch:css
+```
+
+**Usage in Liquid files:**
+
+You can now use Tailwind utility classes in any Liquid template:
+
+```liquid
+<div class="bg-blue-500 text-white p-4 rounded-lg">
+  <h1 class="text-3xl font-bold">Hello Tailwind!</h1>
+</div>
+```
+
+**Development Workflow:**
+
+**Option 1: Run everything with one command (Recommended)**
+
+```bash
+# Inside the Docker container
+cd silkandsnow
+npm run dev
+```
+
+This single command runs both:
+
+- Shopify theme dev server (with hot reload)
+- Tailwind CSS watch mode (auto-rebuild on changes)
+
+**Option 2: Run separately in two terminals**
+
+1. Run `npm run watch:css` in one terminal (inside Docker)
+2. Run `shopify theme dev` in another terminal
+3. Edit your Liquid files with Tailwind classes
+4. Tailwind automatically rebuilds when you save
+
+> **Note:** Only the compiled `assets/tailwind.css` is uploaded to Shopify. Source files in `src/` and `node_modules/` are excluded via `.shopifyignore`.
 
 ---
 
@@ -166,6 +252,29 @@ You might have another instance running.
 You need the Liquid extension.
 
 - **Fix:** Install the recommended extension **"Shopify Liquid"** (id: `Shopify.theme-check-vscode`).
+
+### Tailwind CSS not rebuilding?
+
+If your Tailwind classes aren't being compiled:
+
+1. Check that `npm run dev` or `npm run watch:css` is running
+2. Verify the file `assets/tailwind.css` exists
+3. Check the terminal for Tailwind build errors
+4. Make sure your changes are in files that Tailwind scans (`.liquid` files)
+
+### Concurrent mode (`npm run dev`) not working?
+
+If both services don't start:
+
+- **Fix:** Stop any existing Shopify dev servers first (`Ctrl + C`)
+- **Fix:** Make sure you're in the `silkandsnow` directory before running `npm run dev`
+- **Fix:** Check that `concurrently` is installed: `npm install`
+
+### Tailwind classes not showing in browser?
+
+1. Check that `assets/tailwind.css` is linked in `snippets/stylesheets.liquid`
+2. Clear your browser cache (`Ctrl + Shift + R`)
+3. Rebuild Tailwind: `npm run build:css`
 
 ---
 

@@ -1,0 +1,12 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "**Store URL:** [https://sri-sunkara-shop-dev.myshopify.com/](https://sri-sunkara-shop-dev.myshopify.com/)\r **Store Password:** `luiggu`",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
