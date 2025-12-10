@@ -1,107 +1,180 @@
-# SriSunkaraShopify
+# Sri Sunkara Shop Dev
 
-This project contains the Shopify theme and Docker configuration for the Sri Sunkara shop.
+**Store URL:** [https://sri-sunkara-shop-dev.myshopify.com/](https://sri-sunkara-shop-dev.myshopify.com/)
+**Store Password:** `luiggu`
 
-## Getting Started
+This project contains the Shopify theme and Docker configuration for the Sri Sunkara shop. We use Docker to ensure a consistent development environment for everyone.
 
-We use Docker to run the Shopify CLI, ensuring a consistent environment without local dependency issues.
-The current directory is mounted to `/app` inside the container, so any changes you make locally are immediately reflected in the container.
+**Silk and Snow Store URL:** [https://development-silkandsnow.myshopify.com/](https://development-silkandsnow.myshopify.com/)
+**Silk and Snow Password:** `thatse`
 
-### Prerequisites
+---
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop) installed and running.
+## ⚡ Quick Start
 
-### Installation & Usage
+Three steps to get your server running:
 
-1.  **Clone the repository:**
-
-    ```bash
-    git clone https://github.com/charanbobby/SriSunkaraShopify.git
-    cd SriSunkaraShopify
-    ```
-
-2.  **Start the environment:**
+1.  **Start Docker:**
 
     ```powershell
     docker-compose up -d
     ```
 
-3.  **Run Shopify Commands:**
-    You can run commands inside the container using `docker-compose exec`:
-
-    _Check version:_
-
-    ```powershell
-    docker-compose exec -T shopify-cli shopify version
-    ```
-
-## Workflow (Interactive Mode)
-
-We recommend using the interactive shell for most tasks.
-
-1.  **Enter the container:**
+2.  **Enter the Dev Container:**
 
     ```powershell
     docker-compose exec -it shopify-cli sh
     ```
 
-    _Your prompt will change to something like `/app #`_
+3.  **Start the Theme Server:**
+    ```bash
+    shopify theme dev --store=sri-sunkara-shop-dev.myshopify.com --host 0.0.0.0
+    ```
+    _(If asked to login, copy the URL printed in the terminal to your browser)_
 
-2.  **Login:**
-    Run `shopify theme login`.
+**Access your local site at:** [http://localhost:9292](http://localhost:9292)
 
-    > [!IMPORTANT] > **Manual Login Required**: The container cannot open your browser automatically. It will print a URL to the terminal. Copy and paste this URL into your browser to complete the login.
+---
 
-3.  **Common Tasks:**
+## 🛠️ Detailed Workflow
 
-    _Pull existing theme:_
+### 1. Installation (First Time Only)
+
+1.  Install [Docker Desktop](https://www.docker.com/products/docker-desktop).
+2.  Clone this repository:
+    ```bash
+    git clone https://github.com/charanbobby/SriSunkaraShopify.git
+    cd SriSunkaraShopify
+    ```
+3.  Start the container: `docker-compose up -d`
+
+### 2. Daily Development
+
+We do **all** our work inside the `shopify-cli` container to avoid version conflicts.
+
+1.  **Shell into the container:**
+
+    ```powershell
+    docker-compose exec -it shopify-cli sh
+    ```
+
+    _Your prompt will change to `/app #`_
+
+2.  **Pull the latest live theme (Optional):**
+    If you want to sync your local files with what is currently live:
 
     ```bash
     shopify theme pull
     ```
 
-    You will be prompted to select the theme you want to pull from your store (e.g., "Dawn", "Development").
-
-    _Serve (preview) a theme:_
+3.  **Run the Dev Server:**
 
     ```bash
-    cd my-themed-folder
-    shopify theme dev --host 0.0.0.0
+    shopify theme dev --store=sri-sunkara-shop-dev.myshopify.com --host 0.0.0.0
     ```
 
-    > Note: We use `--host 0.0.0.0` to expose the server to your host machine.
-    > **Access**: Open `http://localhost:9292` in your browser.
+4.  **Stop the Server:**
+    Press `Ctrl + C` in the terminal.
 
-    _Create a new app:_
+5.  **Exit the Container:**
+    Type `exit` or press `Ctrl + D`.
 
-    ```bash
-    npm init @shopify/app@latest
-    ```
+---
 
-## Troubleshooting
+## ❄️ Silk and Snow Workflow
 
-- **Login hanging or crashing**: We've set `CODESPACES=1` in the Dockerfile to force the CLI to print a URL instead of opening a browser. If `xdg-open` errors persist, double-check that you are copying the URL manually.
-- **Port already in use**: Ensure no other `shopify theme dev` process is running (check `docker-compose ps`).
-- **File permissions**: On Docker Desktop for Windows, file permissions are usually handled automatically. If you cannot edit files, check your Docker Desktop resource sharing settings.
+### 1. Developer Setup
 
-### Test Store Password
-
-`luiggu`
-
-## Monitoring Resources
-
-To check the resource usage (CPU/Memory) of the Docker container, use one of these methods:
-
-1.  **Terminal (Quickest)**:
-    Run the command:
+1.  **Shell into the container (same as above):**
 
     ```powershell
-    docker stats
+    docker-compose exec -it shopify-cli sh
     ```
 
-2.  **Docker Desktop (Graphical)**:
-    Open the Docker Desktop dashboard, go to **Containers**, and click on the **Stats** tab (graph icon) for `shopify-shopify-cli-1`.
+2.  **Pull the Theme (Optional):**
 
-3.  **VS Code Docker Extension**:
-    Click the **Docker** icon (whale) in the VS Code sidebar. Right-click the running container and select **View Stats**.
-    _(Note: The "Dev Containers" view shown in your screenshot may not be configured to show these stats directly)._
+    ```bash
+    shopify theme pull --store=development-silkandsnow.myshopify.com --path silkandsnow
+    ```
+
+3.  **Run the Dev Server:**
+    ```bash
+    shopify theme dev --store=development-silkandsnow.myshopify.com --path silkandsnow --host 0.0.0.0
+    ```
+    _(Note the `--path silkandsnow` argument is critical)_
+
+---
+
+## 🔄 Bidirectional Workflow (Code ↔️ Theme Editor)
+
+There is no "offline" version of the Theme Editor. Instead, the CLI connects the **Shopify Admin** to your **Local Code**.
+
+### 1. From Code to Preview (Hot Reloading)
+
+1.  Edit a file in VS Code (e.g., `layout/theme.liquid`).
+2.  Save the file (`Ctrl + S`).
+3.  The browser preview (`http://localhost:9292`) will automatically reload with your changes.
+
+### 2. From Theme Editor to Code
+
+1.  Look at your terminal output for a "Theme Editor" link (usually `https://admin.shopify.com/.../editor...`).
+2.  Open that link. **It controls your local development theme.**
+3.  Make a change in the editor (e.g., change a color or text setting).
+4.  Click **Save**.
+5.  **Watch your VS Code:** The CLI will download the changes to your local `config/settings_data.json` or templates automatically.
+
+**Crucial:** Always ensure your `shopify theme dev` server is running while you edit. If you stop the server, the link between the Editor and your local code is broken.
+
+### 3. Multiple Developers? No Problem.
+
+When you run `shopify theme dev`, Shopify creates a **unique, temporary theme** just for you. Your changes in the editor are isolated to this temporary theme. You won't overwrite teammates who are also working on their own local dev servers.
+
+---
+
+## ❓ Troubleshooting
+
+### My changes in `index.json` aren't showing up?
+
+Changes to JSON configuration files sometimes require a **server restart** to take effect.
+
+1.  Stop the server (`Ctrl + C`).
+2.  Run `shopify theme dev ...` again.
+
+### "Service is not valid for authentication" (401 Error)?
+
+Your session has expired (common after restarting containers).
+
+- **Fix:** Run `shopify auth logout`, then log in again:
+  ```bash
+  shopify theme login --store=sri-sunkara-shop-dev.myshopify.com
+  ```
+
+### Login hanging or crashing?
+
+We use `CODESPACES=1` to force the CLI to print a URL instead of trying to open a browser window from inside Docker.
+
+- **Fix:** Manually copy the long URL starting with `https://accounts.shopify.com/...` and paste it into your browser.
+
+### "Port already in use" error?
+
+You might have another instance running.
+
+- **Fix:** Run `docker-compose ps` to see running containers, or just restart Docker.
+
+### Files are all white (no color) in VS Code?
+
+You need the Liquid extension.
+
+- **Fix:** Install the recommended extension **"Shopify Liquid"** (id: `Shopify.theme-check-vscode`).
+
+---
+
+## 📊 Monitoring Resources
+
+To check if Docker is using too much memory:
+
+```powershell
+docker stats
+```
+
+Look for `shopify-shopify-cli-1`.

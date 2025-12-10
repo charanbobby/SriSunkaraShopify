@@ -1,0 +1,347 @@
+{% doc %}
+  @prompt
+    I need a block that allows for 4 small images that will have a + sign in between them and horizontal format, My image uploaded seems to be cut off, make it so the image is adjusted to the layout parameters, also make it possible to write the product name text underneath the images, Make the text spacing closer to the image
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-image-row-{{ ai_gen_id }} {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: {{ block.settings.spacing }}px;
+    padding: {{ block.settings.padding }}px;
+    background-color: {{ block.settings.background_color }};
+    flex-wrap: wrap;
+  }
+
+  .ai-image-item-{{ ai_gen_id }} {
+    width: {{ block.settings.image_size }}px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: {{ block.settings.text_spacing }}px;
+  }
+
+  .ai-image-wrapper-{{ ai_gen_id }} {
+    width: 100%;
+    height: {{ block.settings.image_size }}px;
+    border-radius: {{ block.settings.border_radius }}px;
+    overflow: hidden;
+    border: {{ block.settings.border_width }}px solid {{ block.settings.border_color }};
+  }
+
+  .ai-image-wrapper-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: {{ block.settings.image_fit }};
+    display: block;
+  }
+
+  .ai-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-image-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-image-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.text_size }}px;
+    color: {{ block.settings.text_color }};
+    text-align: center;
+    line-height: 1.3;
+    width: 100%;
+    word-wrap: break-word;
+  }
+
+  .ai-plus-sign-{{ ai_gen_id }} {
+    font-size: {{ block.settings.plus_size }}px;
+    color: {{ block.settings.plus_color }};
+    font-weight: 300;
+    line-height: 1;
+    flex-shrink: 0;
+    align-self: center;
+    margin-top: {{ block.settings.image_size | divided_by: 2 }}px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-image-row-{{ ai_gen_id }} {
+      gap: {{ block.settings.spacing | times: 0.7 }}px;
+      padding: {{ block.settings.padding | times: 0.7 }}px;
+    }
+
+    .ai-image-item-{{ ai_gen_id }} {
+      width: {{ block.settings.image_size | times: 0.7 }}px;
+      gap: {{ block.settings.text_spacing | times: 0.7 }}px;
+    }
+
+    .ai-image-wrapper-{{ ai_gen_id }} {
+      height: {{ block.settings.image_size | times: 0.7 }}px;
+    }
+
+    .ai-image-text-{{ ai_gen_id }} {
+      font-size: {{ block.settings.text_size | times: 0.9 }}px;
+    }
+
+    .ai-plus-sign-{{ ai_gen_id }} {
+      font-size: {{ block.settings.plus_size | times: 0.7 }}px;
+      margin-top: {{ block.settings.image_size | times: 0.7 | divided_by: 2 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-image-row-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% for i in (1..4) %}
+    {% liquid
+      assign image_key = 'image_' | append: i
+      assign text_key = 'text_' | append: i
+      assign image = block.settings[image_key]
+      assign text = block.settings[text_key]
+    %}
+
+    <div class="ai-image-item-{{ ai_gen_id }}">
+      <div class="ai-image-wrapper-{{ ai_gen_id }}">
+        {% if image %}
+          <img
+            src="{{ image | image_url: width: 400 }}"
+            alt="{{ image.alt | escape }}"
+            loading="lazy"
+            width="{{ image.width }}"
+            height="{{ image.height }}"
+          >
+        {% else %}
+          <div class="ai-image-placeholder-{{ ai_gen_id }}">
+            {{ 'image' | placeholder_svg_tag }}
+          </div>
+        {% endif %}
+      </div>
+      {% if text != blank %}
+        <div class="ai-image-text-{{ ai_gen_id }}">{{ text }}</div>
+      {% endif %}
+    </div>
+
+    {% if i < 4 %}
+      <div class="ai-plus-sign-{{ ai_gen_id }}">+</div>
+    {% endif %}
+  {% endfor %}
+</div>
+
+{% schema %}
+{
+  "name": "Image row with plus signs",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_1",
+      "label": "Product name"
+    },
+    {
+      "type": "header",
+      "content": "Image 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_2",
+      "label": "Product name"
+    },
+    {
+      "type": "header",
+      "content": "Image 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_3",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_3",
+      "label": "Product name"
+    },
+    {
+      "type": "header",
+      "content": "Image 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_4",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_4",
+      "label": "Product name"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "image_size",
+      "min": 40,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Image size",
+      "default": 100
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit",
+      "options": [
+        {
+          "value": "contain",
+          "label": "Contain (show full image)"
+        },
+        {
+          "value": "cover",
+          "label": "Cover (fill space)"
+        },
+        {
+          "value": "fill",
+          "label": "Fill (stretch)"
+        }
+      ],
+      "default": "contain",
+      "info": "Contain shows the full image, Cover fills the space and may crop"
+    },
+    {
+      "type": "range",
+      "id": "spacing",
+      "min": 8,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Spacing",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "label": "Padding",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Text style"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "text_spacing",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Text spacing",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Plus sign"
+    },
+    {
+      "type": "range",
+      "id": "plus_size",
+      "min": 16,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Size",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "plus_color",
+      "label": "Color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Image border radius",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Image border width",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Image border color",
+      "default": "#e6e6e6"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image row with plus signs"
+    }
+  ]
+}
+{% endschema %}

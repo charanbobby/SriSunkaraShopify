@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "ss-landing",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}
