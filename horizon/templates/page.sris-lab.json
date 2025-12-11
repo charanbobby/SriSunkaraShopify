@@ -1,0 +1,78 @@
+{
+  "sections": {
+    "main": {
+      "type": "sri-lab",
+      "settings": {
+        "heading": "Welcome to Sri's Lab",
+        "background": "linear-gradient(45deg, #ff00cc, #3333ff)"
+      },
+      "blocks": {
+        "button1": {
+          "type": "whacky_button",
+          "settings": {
+            "button_label": "Enter at your own risk!",
+            "button_link": "/collections/all",
+            "animation_type": "explode"
+          }
+        },
+        "button2": {
+          "type": "whacky_button",
+          "settings": {
+            "button_label": "Secret Stash",
+            "button_link": "/products",
+            "animation_type": "bounce"
+          }
+        },
+        "slide1": {
+          "type": "carousel_slide",
+          "settings": {
+            "caption": "Lab Experiment #1"
+          }
+        },
+        "slide2": {
+          "type": "carousel_slide",
+          "settings": {
+            "caption": "Lab Experiment #2"
+          }
+        },
+        "slide3": {
+            "type": "carousel_slide",
+            "settings": {
+              "caption": "Lab Experiment #3"
+            }
+        },
+        "slide4": {
+            "type": "carousel_slide",
+            "settings": {
+              "caption": "Lab Experiment #4"
+            }
+        },
+        "slide5": {
+            "type": "carousel_slide",
+            "settings": {
+              "caption": "Lab Experiment #5"
+            }
+        },
+        "slide6": {
+            "type": "carousel_slide",
+            "settings": {
+              "caption": "Lab Experiment #6"
+            }
+        }
+      },
+      "block_order": [
+        "button1",
+        "button2",
+        "slide1",
+        "slide2",
+        "slide3",
+        "slide4",
+        "slide5",
+        "slide6"
+      ]
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

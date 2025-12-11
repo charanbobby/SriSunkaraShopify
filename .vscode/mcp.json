@@ -1,0 +1,22 @@
+{
+    "mcpServers": {
+        "github-global": {
+            "command": "powershell",
+            "args": [
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "C:\\Users\\chara\\AppData\\Local\\GitHubMCPServer\\start-mcp.ps1"
+            ]
+        },
+        "shopify-dev": {
+            "command": "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe",
+            "args": [
+                "exec",
+                "-i",
+                "shopify-shopify-cli-1",
+                "shopify-dev-mcp"
+            ]
+        }
+    }
+}

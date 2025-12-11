@@ -1,0 +1,400 @@
+{% schema %}
+{
+  "name": "Sri's Lab",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Welcome to Sri's Lab"
+    },
+    {
+      "type": "color_background",
+      "id": "background",
+      "label": "Background",
+      "default": "linear-gradient(45deg, #ff00cc, #3333ff)"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "whacky_button",
+      "name": "Whacky Button",
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button Label",
+          "default": "Click Me!"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button Link"
+        },
+        {
+          "type": "select",
+          "id": "animation_type",
+          "label": "Animation Type",
+          "options": [
+            { "value": "glow", "label": "Glow" },
+            { "value": "bounce", "label": "Bounce" },
+            { "value": "explode", "label": "Explode" },
+            { "value": "jiggle", "label": "Jiggle" }
+          ],
+          "default": "glow"
+        }
+      ]
+    },
+    {
+      "type": "carousel_slide",
+      "name": "Carousel Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption",
+          "default": "Whacky Stuff"
+        }
+      ]
+    },
+    {
+      "type": "product_highlight",
+      "name": "Product Highlight",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "text",
+          "id": "custom_title",
+          "label": "Custom Title (optional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sri's Lab Section",
+      "blocks": [
+        { "type": "whacky_button" },
+        { "type": "whacky_button" },
+        { "type": "carousel_slide" },
+        { "type": "carousel_slide" },
+        { "type": "carousel_slide" }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<div class="sri-lab-container" style="background: {{ section.settings.background }};">
+  <h1 class="sri-title">{{ section.settings.heading }}</h1>
+
+  <div class="sri-content-grid">
+    <!-- Whacky Buttons Grid -->
+    <div class="whacky-buttons-area">
+      {% for block in section.blocks %}
+        {% if block.type == 'whacky_button' %}
+          <a href="{{ block.settings.button_link }}" class="whacky-btn whacky-btn--{{ block.settings.animation_type }}">
+            {{ block.settings.button_label }}
+          </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <!-- 3D Carousel -->
+    <div class="whacky-carousel-container">
+      <div class="whacky-carousel">
+        {% for block in section.blocks %}
+          {% if block.type == 'carousel_slide' %}
+            <div class="carousel-item">
+              {% if block.settings.image %}
+                {{ block.settings.image | image_url: width: 400 | image_tag: loading: 'lazy' }}
+              {% else %}
+                <div class="placeholder-image">?</div>
+              {% endif %}
+              <div class="carousel-caption">{{ block.settings.caption }}</div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Highlights -->
+  <div class="sri-products-area">
+    {% for block in section.blocks %}
+      {% if block.type == 'product_highlight' %}
+        {% assign product = block.settings.product %}
+        {% if product != blank %}
+          <div class="whacky-product-card">
+            <div class="product-floater">
+              {{ product.featured_image | image_url: width: 300 | image_tag: class: 'product-img' }}
+            </div>
+            <h3 class="product-title">
+              {% if block.settings.custom_title != blank %}
+                {{ block.settings.custom_title }}
+              {% else %}
+                {{ product.title }}
+              {% endif %}
+            </h3>
+            <div class="product-price">{{ product.price | money }}</div>
+            <form action="/cart/add" method="post" enctype="multipart/form-data">
+              <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+              <button type="submit" class="buy-now-jiggle">Add to Cart 🛒</button>
+            </form>
+          </div>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+  .sri-lab-container {
+    padding: 60px 20px;
+    min-height: 80vh;
+    color: white;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; /* Intentionally whacky */
+    overflow-x: hidden;
+    perspective: 1000px;
+  }
+
+  .sri-title {
+    text-align: center;
+    font-size: 4rem;
+    text-shadow: 3px 3px 0px #000;
+    margin-bottom: 50px;
+    animation: title-float 3s ease-in-out infinite;
+  }
+
+  @keyframes title-float {
+    0%,
+    100% {
+      transform: translateY(0) rotate(-2deg);
+    }
+    50% {
+      transform: translateY(-10px) rotate(2deg);
+    }
+  }
+
+  /* Grid Layout */
+  .sri-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 60px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media (max-width: 768px) {
+    .sri-content-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Whacky Buttons */
+  .whacky-buttons-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .whacky-btn {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    border: 3px solid white;
+    border-radius: 50px;
+    transition: all 0.3s;
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  .whacky-btn--glow:hover {
+    box-shadow: 0 0 20px #fff, 0 0 40px #ff00cc;
+    background: #ff00cc;
+  }
+
+  .whacky-btn--bounce:hover {
+    animation: bounce 0.5s infinite;
+    background: #3333ff;
+  }
+
+  .whacky-btn--explode:hover {
+    transform: scale(1.5) rotate(10deg);
+    background: #ff3300;
+    opacity: 0.8;
+  }
+
+  .whacky-btn--jiggle:hover {
+    animation: title-float 0.2s infinite;
+    background: #00ff33;
+    color: black;
+  }
+
+  @keyframes bounce {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  /* 3D Carousel */
+  .whacky-carousel-container {
+    perspective: 1000px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+  }
+
+  .whacky-carousel {
+    width: 200px;
+    height: 200px;
+    position: relative;
+    transform-style: preserve-3d;
+    animation: spin 10s infinite linear;
+  }
+
+  .carousel-item {
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px solid white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: black;
+    font-weight: bold;
+    /* Arranging in a circle roughly */
+  }
+
+  /* Hardcoding positions for a few items for demo purposes to fake a 3D ring */
+  .carousel-item:nth-child(1) {
+    transform: rotateY(0deg) translateZ(250px);
+  }
+  .carousel-item:nth-child(2) {
+    transform: rotateY(60deg) translateZ(250px);
+  }
+  .carousel-item:nth-child(3) {
+    transform: rotateY(120deg) translateZ(250px);
+  }
+  .carousel-item:nth-child(4) {
+    transform: rotateY(180deg) translateZ(250px);
+  }
+  .carousel-item:nth-child(5) {
+    transform: rotateY(240deg) translateZ(250px);
+  }
+  .carousel-item:nth-child(6) {
+    transform: rotateY(300deg) translateZ(250px);
+  }
+
+  .carousel-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .placeholder-image {
+    font-size: 50px;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotateY(0deg);
+    }
+    to {
+      transform: rotateY(360deg);
+    }
+  }
+
+  /* Product Highlights */
+  .sri-products-area {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    margin-top: 50px;
+  }
+
+  .whacky-product-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 20px;
+    width: 300px;
+    text-align: center;
+    border: 2px dashed rgba(255, 255, 255, 0.5);
+    transition: transform 0.3s;
+  }
+
+  .whacky-product-card:hover {
+    transform: scale(1.05) rotate(2deg);
+    border-color: #fff;
+  }
+
+  .product-floater {
+    animation: title-float 4s ease-in-out infinite reverse;
+  }
+
+  .product-img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+
+  .product-title {
+    font-size: 1.5rem;
+    margin: 15px 0;
+  }
+
+  .product-price {
+    font-size: 1.2rem;
+    color: #ffcc00;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+
+  .buy-now-jiggle {
+    background: #ff00cc;
+    border: none;
+    padding: 10px 20px;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #990099;
+    transition: all 0.1s;
+  }
+
+  .buy-now-jiggle:active {
+    transform: translateY(5px);
+    box-shadow: 0 0 0 #990099;
+  }
+
+  .buy-now-jiggle:hover {
+    animation: bounce 0.3s infinite;
+  }
+</style>
