@@ -278,6 +278,220 @@ If both services don't start:
 
 ---
 
+---
+
+## 🤖 GitHub MCP Server ✅
+
+The container includes the **GitHub MCP (Model Context Protocol) Server**, which allows AI tools to interact with GitHub repositories, issues, pull requests, and code.
+
+**Status:** ✅ Installed and configured with Go 1.24.0
+
+### Quick Start
+
+The MCP server is already installed! Just configure your token:
+
+1. **Create a GitHub Personal Access Token:**
+
+   - Visit: [https://github.com/settings/personal-access-tokens/new](https://github.com/settings/personal-access-tokens/new)
+   - Grant permissions: `repo`, `read:org`, `read:user`, `workflow` (optional)
+   - Copy the token (you'll only see it once!)
+
+2. **Add token to `.env` file:**
+
+   ```bash
+   # Edit the .env file in the project root
+   GITHUB_PERSONAL_ACCESS_TOKEN=your_token_here
+   ```
+
+3. **Restart the container:**
+
+   ```powershell
+   docker-compose down
+   docker-compose up -d
+   ```
+
+4. **Verify it works:**
+   ```bash
+   docker-compose exec -it shopify-cli sh
+   github-mcp-server --version
+   ```
+
+### Using the MCP Server
+
+#### Option 1: Direct Usage (Inside Container)
+
+```bash
+# Shell into the container
+docker-compose exec -it shopify-cli sh
+
+# Verify MCP server is installed
+github-mcp-server --help
+
+# Run the MCP server in stdio mode
+github-mcp-server stdio
+
+# The server is now running and waiting for MCP protocol messages
+```
+
+#### Option 2: With VS Code / GitHub Copilot
+
+Create `.vscode/mcp.json` in your workspace:
+
+```json
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "github_token",
+      "description": "GitHub Personal Access Token",
+      "password": true
+    }
+  ],
+  "servers": {
+    "github": {
+      "command": "docker",
+      "args": [
+        "compose",
+        "exec",
+        "-T",
+        "shopify-cli",
+        "github-mcp-server",
+        "stdio"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${input:github_token}"
+      }
+    }
+  }
+}
+```
+
+When prompted, enter your GitHub token. VS Code will use the MCP server running in your Docker container.
+
+#### Option 3: With Other AI Tools
+
+The MCP server works with any tool that supports the Model Context Protocol:
+
+- **Claude Desktop** - [Installation guide](https://github.com/github/github-mcp-server/blob/main/docs/installation-guides/install-claude.md)
+- **Cursor** - [Installation guide](https://github.com/github/github-mcp-server/blob/main/docs/installation-guides/install-cursor.md)
+- **Windsurf** - [Installation guide](https://github.com/github/github-mcp-server/blob/main/docs/installation-guides/install-windsurf.md)
+
+### What You Can Do
+
+With the MCP server, your AI tools can:
+
+**Repository Operations:**
+
+- 🔍 Search code across repositories
+- 📖 Read file contents
+- 🌳 Browse repository structure
+- 🔀 Compare branches and commits
+
+**Issue Management:**
+
+- 📝 Create, read, update issues
+- 🏷️ Manage labels
+- 💬 Add comments
+- 🔍 Search issues
+
+**Pull Requests:**
+
+- 🔀 Create pull requests
+- 👀 Review PR changes
+- 💬 Comment on PRs
+- ✅ Merge PRs
+
+**GitHub Actions:**
+
+- 🚀 View workflow runs
+- 📊 Check job status
+- 🔄 Trigger workflows
+
+**Security:**
+
+- 🔐 View security alerts
+- 🛡️ Check code scanning results
+- 📋 Review Dependabot alerts
+
+**And More:**
+
+- 💬 GitHub Discussions
+- 📌 Gists
+- 👥 User and organization info
+- ⭐ Stargazers
+
+### Available Toolsets
+
+The MCP server provides access to various GitHub features through toolsets:
+
+- `repos` - Repository operations (read files, search code, etc.)
+- `issues` - Issue management
+- `pull_requests` - PR operations
+- `actions` - GitHub Actions workflows
+- `code_security` - Security scanning and alerts
+- `discussions` - GitHub Discussions
+- `gists` - Gist management
+- `users` - User and organization info
+
+**Configure toolsets:**
+
+```bash
+# Inside container, set specific toolsets
+export GITHUB_TOOLSETS="repos,issues,pull_requests"
+github-mcp-server stdio
+
+# Or enable all toolsets
+export GITHUB_TOOLSETS="all"
+github-mcp-server stdio
+```
+
+### Example Usage
+
+Try asking your AI tool:
+
+- "Show me the README from the github/github-mcp-server repository"
+- "List the open issues in charanbobby/SriSunkaraShopify"
+- "Create a new issue about improving documentation"
+- "Show me the latest commits in the main branch"
+- "Search for 'tailwind' in this repository"
+
+### Security Notes
+
+> [!CAUTION] > **Never commit your `.env` file or expose your GitHub token!**
+>
+> - The `.env` file is already in `.gitignore`
+> - Use `.env.example` as a template only
+> - Rotate tokens regularly at: https://github.com/settings/tokens
+> - Grant minimal permissions needed
+> - If compromised, revoke immediately
+
+### Troubleshooting
+
+**Token not working?**
+
+```bash
+# Verify token is set in container
+docker-compose exec -it shopify-cli env | grep GITHUB
+```
+
+**MCP server not found?**
+
+```bash
+# Verify installation
+docker-compose exec -it shopify-cli which github-mcp-server
+docker-compose exec -it shopify-cli github-mcp-server --version
+```
+
+**Need to rebuild?**
+
+```powershell
+docker-compose down
+docker-compose build --no-cache
+docker-compose up -d
+```
+
+---
+
 ## 📊 Monitoring Resources
 
 To check if Docker is using too much memory:

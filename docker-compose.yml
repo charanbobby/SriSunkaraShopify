@@ -5,5 +5,7 @@ services:
       - .:/app
     ports:
       - "9292:9292"
+    environment:
+      - GITHUB_PERSONAL_ACCESS_TOKEN=${GITHUB_PERSONAL_ACCESS_TOKEN:-}
     tty: true
     stdin_open: true
